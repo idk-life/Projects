@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Task List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: 40px auto;
+      background-color: #fafafa;
+    }
+    h1 {
+      text-align: center;
+    }
+    .form-box {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input, select {
+      padding: 8px;
+      margin: 4px;
+    }
+    input {
+      width: 60%;
+    }
+    button {
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    .category {
+      margin-bottom: 20px;
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .category h2 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+    }
+
+    /* four category colours */
+    .cat1 { background-color: #ffd6d6; }   /* necessary + important */
+    .cat2 { background-color: #fff3cd; }   /* necessary, not important */
+    .cat3 { background-color: #d6e9ff; }   /* important, not necessary */
+    .cat4 { background-color: #e2e2e2; }   /* neither */
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    li {
+      background-color: white;
+      padding: 8px;
+      margin-bottom: 6px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .done {
+      text-decoration: line-through;
+      color: gray;
+    }
+    .empty-msg {
+      font-size: 14px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🗂️ My Task List</h1>
+
+  <div class="form-box">
+    <input type="text" id="taskInput" placeholder="Enter a task">
+    <br>
+    <select id="categorySelect">
+      <option value="1">🔴 Necessary & Important</option>
+      <option value="2">🟡 Necessary, Not Important</option>
+      <option value="3">🔵 Important, Not Necessary</option>
+      <option value="4">⚪ Not Necessary, Not Important</option>
+    </select>
+    <button onclick="addTask()">Add Task</button>
+  </div>
+
+  <div class="category cat1">
+    <h2>🔴 Necessary & Important</h2>
+    <ul id="list1"></ul>
+    <p class="empty-msg" id="empty1">No tasks here</p>
+  </div>
+
+  <div class="category cat2">
+    <h2>🟡 Necessary, Not Important</h2>
+    <ul id="list2"></ul>
+    <p class="empty-msg" id="empty2">No tasks here</p>
+  </div>
+
+  <div class="category cat3">
+    <h2>🔵 Important, Not Necessary</h2>
+    <ul id="list3"></ul>
+    <p class="empty-msg" id="empty3">No tasks here</p>
+  </div>
+
+  <div class="category cat4">
+    <h2>⚪ Not Necessary, Not Important</h2>
+    <ul id="list4"></ul>
+    <p class="empty-msg" id="empty4">No tasks here</p>
+  </div>
+
+  <script>
+    let tasks = [];
+
+    function addTask() {
+      let input = document.getElementById("taskInput");
+      let taskText = input.value;
+      let category = document.getElementById("categorySelect").value;
+
+      if (taskText === "") {
+        alert("Please enter a task");
+        return;
+      }
+
+      tasks.push({ text: taskText, done: false, category: category });
+      input.value = "";
+      showTasks();
+    }
+
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      showTasks();
+    }
+
+    function toggleDone(index) {
+      tasks[index].done = !tasks[index].done;
+      showTasks();
+    }
+
+    function showTasks() {
+      // clear all four lists first
+      for (let c = 1; c <= 4; c++) {
+        document.getElementById("list" + c).innerHTML = "";
+      }
+
+      // count tasks per category to know if a list is empty
+      let counts = { 1: 0, 2: 0, 3: 0, 4: 0 };
+
+      for (let i = 0; i < tasks.length; i++) {
+        let task = tasks[i];
+        counts[task.category]++;
+
+        let li = document.createElement("li");
+        if (task.done) {
+          li.className = "done";
+        }
+
+        li.innerHTML =
+          task.text +
+          " <span>" +
+          "<button onclick='toggleDone(" + i + ")'>Done</button> " +
+          "<button onclick='deleteTask(" + i + ")'>Delete</button>" +
+          "</span>";
+
+        document.getElementById("list" + task.category).appendChild(li);
+      }
+
+      // show/hide "No tasks here" message
+      for (let c = 1; c <= 4; c++) {
+        document.getElementById("empty" + c).style.display =
+          counts[c] === 0 ? "block" : "none";
+      }
+    }
+
+    showTasks();
+  </script>
+
+</body>
+</html>
